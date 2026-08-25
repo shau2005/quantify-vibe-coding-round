@@ -1,0 +1,11 @@
+{
+  "name": "subscription-tracker",
+  "version": "1.0.0",
+  "description": "Full-stack Subscription Tracker — React + Vite frontend, Express backend",
+  "private": true,
+  "scripts": {
+    "client": "npm run dev --prefix client",
+    "server": "npm run dev --prefix server",
+    "install:all": "npm install --prefix client && npm install --prefix server"
+  }
+}

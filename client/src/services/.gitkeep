@@ -1,0 +1,3 @@
+# client/src/services
+# API call functions go here (e.g., api.js)
+# All server communication is centralised here — no fetch() calls in components.
