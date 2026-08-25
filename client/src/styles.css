@@ -388,3 +388,103 @@ body {
   color: #40404f;
 }
 
+/* ── Paused row ───────────────────────────────────────────── */
+
+/* Grey out paused rows — subscription remains visible but clearly inactive */
+.row--paused {
+  opacity: 0.45;
+  background-color: rgba(107, 107, 128, 0.06);
+  border-left: 3px solid #3d3d55 !important;
+}
+
+.row--paused:hover {
+  opacity: 0.6;
+  background-color: rgba(107, 107, 128, 0.1) !important;
+}
+
+/* ── Toggle switch ────────────────────────────────────────── */
+
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* The pill-shaped track */
+.toggle-switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.toggle-switch--on {
+  background: linear-gradient(130deg, #7c5ccc, #4f87e0);
+}
+
+.toggle-switch--off {
+  background: #2a2a38;
+}
+
+.toggle-switch--loading {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.toggle-switch:focus-visible {
+  outline: 2px solid #7c5ccc;
+  outline-offset: 2px;
+}
+
+/* The circular thumb */
+.toggle-thumb {
+  position: absolute;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.2s;
+  pointer-events: none;
+}
+
+.toggle-switch--on .toggle-thumb {
+  left: 18px;
+}
+
+.toggle-switch--off .toggle-thumb {
+  left: 2px;
+}
+
+/* Label next to the switch */
+.toggle-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  min-width: 3rem;
+}
+
+.toggle-label--active {
+  color: #34d399;
+}
+
+.toggle-label--paused {
+  color: #9090a8;
+}
+
+/* ── Per-row inline error ─────────────────────────────────── */
+
+.row-error-row {
+  border-bottom: none !important;
+}
+
+.row-error-cell {
+  padding: 0.3rem 0.9rem 0.6rem !important;
+  font-size: 0.78rem;
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.06);
+}

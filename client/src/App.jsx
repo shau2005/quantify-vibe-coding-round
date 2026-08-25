@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { fetchDashboard } from './services/api';
+import { fetchDashboard, updateSubscriptionStatus } from './services/api';
 import MetricsRow from './components/MetricsRow';
 import SubscriptionForm from './components/SubscriptionForm';
 import SubscriptionTable from './components/SubscriptionTable';
@@ -10,7 +10,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [dashboardError, setDashboardError] = useState('');
 
-  // Single request that feeds both MetricsRow and SubscriptionTable
+  // Single request that feeds MetricsRow and SubscriptionTable
   const loadDashboard = useCallback(async () => {
     try {
       setDashboardError('');
@@ -28,10 +28,30 @@ function App() {
     loadDashboard();
   }, [loadDashboard]);
 
-  // Called by SubscriptionForm after a successful POST — one refresh updates
-  // both the metrics row and the subscription table.
+  // Called by SubscriptionForm after a successful POST
   function handleSubscriptionCreated() {
     loadDashboard();
+  }
+
+  /**
+   * Called by SubscriptionRow when the user flips the toggle.
+   *
+   * The backend PATCH /api/subscriptions/:id/status returns:
+   *   { updatedSubscription, metrics }
+   *
+   * We apply that response directly — no metric arithmetic in React.
+   * Throws on error so SubscriptionRow can show the per-row message.
+   */
+  async function handleToggleStatus(id, newStatus) {
+    const result = await updateSubscriptionStatus(id, newStatus);
+
+    // Update subscriptions list: swap only the changed row
+    setSubscriptions((prev) =>
+      prev.map((s) => (s.id === id ? result.updatedSubscription : s))
+    );
+
+    // Update metrics from server-calculated values — no React arithmetic
+    setMetrics(result.metrics);
   }
 
   return (
@@ -57,7 +77,10 @@ function App() {
         <SubscriptionForm onSuccess={handleSubscriptionCreated} />
 
         {!loading && (
-          <SubscriptionTable subscriptions={subscriptions} />
+          <SubscriptionTable
+            subscriptions={subscriptions}
+            onToggleStatus={handleToggleStatus}
+          />
         )}
       </main>
     </div>

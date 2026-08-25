@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "id": "493ba882-0a29-4f39-8d8c-e1b15ca9d871",
+    "serviceName": "Netflix",
+    "cost": 600,
+    "billingCycle": "Monthly",
+    "nextRenewalDate": "2026-08-30",
+    "status": "active"
+  }
+]

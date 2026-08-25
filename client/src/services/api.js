@@ -36,3 +36,22 @@ export async function createSubscription(data) {
   }
   return body;
 }
+
+/**
+ * Toggle a subscription's status between "active" and "paused".
+ * @param {string} id
+ * @param {"active"|"paused"} status
+ * @returns {Promise<{ updatedSubscription: Object, metrics: Object }>}
+ */
+export async function updateSubscriptionStatus(id, status) {
+  const res = await fetch(`${API_BASE}/subscriptions/${id}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  });
+  const body = await res.json();
+  if (!res.ok) {
+    throw new Error(body.error || `Server error: ${res.status}`);
+  }
+  return body; // { updatedSubscription, metrics }
+}

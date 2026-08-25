@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // ─── Formatters (display only — no calculations) ──────────────────────────────
 
@@ -34,24 +34,124 @@ function formatDaysRemaining(days) {
   if (days === 0) return 'Today';
   if (days === 1) return '1 day';
   if (days > 1) return `${days} days`;
-  // Negative: expired
   const ago = Math.abs(days);
   return `Expired ${ago} ${ago === 1 ? 'day' : 'days'} ago`;
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-/** Amber "Renewing Soon" badge — shown only when backend sets renewingSoon=true. */
+/** Amber "Renewing Soon" badge — driven entirely by the server-returned flag. */
 function RenewalBadge({ renewingSoon }) {
   if (!renewingSoon) return <span className="renewal-neutral">—</span>;
   return <span className="badge badge--amber">Renewing Soon</span>;
 }
 
-/** Simple status badge — Active / Paused. No toggle yet. */
-function StatusBadge({ status }) {
-  const cls = status === 'active' ? 'badge badge--active' : 'badge badge--paused';
-  const label = status === 'active' ? 'Active' : 'Paused';
-  return <span className={cls}>{label}</span>;
+/**
+ * StatusToggle
+ *
+ * An accessible toggle switch for Active ↔ Paused.
+ * Calls onToggle(newStatus) when the user clicks.
+ * Disabled while a request for THIS row is in-flight.
+ *
+ * Props:
+ *   status:    "active" | "paused"
+ *   loading:   boolean  — disables the switch while the PATCH is in progress
+ *   onToggle:  (newStatus: string) => void
+ */
+function StatusToggle({ status, loading, onToggle }) {
+  const isActive = status === 'active';
+  const nextStatus = isActive ? 'paused' : 'active';
+
+  return (
+    <div className="toggle-wrapper">
+      <button
+        type="button"
+        role="switch"
+        aria-checked={isActive}
+        aria-label={`Toggle subscription ${isActive ? 'off' : 'on'}`}
+        className={`toggle-switch ${isActive ? 'toggle-switch--on' : 'toggle-switch--off'} ${loading ? 'toggle-switch--loading' : ''}`}
+        onClick={() => !loading && onToggle(nextStatus)}
+        disabled={loading}
+        title={loading ? 'Updating…' : isActive ? 'Click to pause' : 'Click to activate'}
+      >
+        <span className="toggle-thumb" />
+      </button>
+      <span className={`toggle-label ${isActive ? 'toggle-label--active' : 'toggle-label--paused'}`}>
+        {loading ? '…' : isActive ? 'Active' : 'Paused'}
+      </span>
+    </div>
+  );
+}
+
+// ─── Row ─────────────────────────────────────────────────────────────────────
+
+/**
+ * SubscriptionRow
+ *
+ * Manages per-row toggle loading + error state.
+ * Calls onToggleStatus(id, newStatus) which lives in App.jsx.
+ */
+function SubscriptionRow({ sub, onToggleStatus }) {
+  const [rowLoading, setRowLoading] = useState(false);
+  const [rowError, setRowError]     = useState('');
+
+  async function handleToggle(newStatus) {
+    setRowError('');
+    setRowLoading(true);
+    try {
+      await onToggleStatus(sub.id, newStatus);
+    } catch (err) {
+      setRowError(err.message || 'Failed to update status.');
+    } finally {
+      setRowLoading(false);
+    }
+  }
+
+  const isPaused   = sub.status === 'paused';
+  const isRenewing = sub.renewingSoon && !isPaused;
+
+  // Row class priority: paused overrides renewing-soon styling
+  let rowClass = 'row';
+  if (isPaused) {
+    rowClass = 'row row--paused';
+  } else if (sub.renewingSoon) {
+    rowClass = 'row row--renewing';
+  }
+
+  return (
+    <>
+      <tr className={rowClass}>
+        <td className="td-service">{sub.serviceName}</td>
+        <td>{formatINR(sub.cost)}</td>
+        <td>{sub.billingCycle}</td>
+        <td>{formatINR(sub.monthlyCost)}</td>
+        <td>{formatDate(sub.nextRenewalDate)}</td>
+        <td className={sub.daysRemaining < 0 ? 'td-expired' : ''}>
+          {formatDaysRemaining(sub.daysRemaining)}
+        </td>
+        <td>
+          {/* Only show renewal badge for active subscriptions */}
+          <RenewalBadge renewingSoon={isRenewing} />
+        </td>
+        <td>
+          <StatusToggle
+            status={sub.status}
+            loading={rowLoading}
+            onToggle={handleToggle}
+          />
+        </td>
+      </tr>
+
+      {/* Inline error row — appears directly under the subscription row */}
+      {rowError && (
+        <tr className="row-error-row">
+          <td colSpan={8} className="row-error-cell">
+            ⚠ {rowError}
+          </td>
+        </tr>
+      )}
+    </>
+  );
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -59,14 +159,11 @@ function StatusBadge({ status }) {
 /**
  * SubscriptionTable
  *
- * Renders subscriptions returned by GET /api/dashboard.
- * All derived values (monthlyCost, daysRemaining, renewingSoon)
- * are passed straight from the server response — no recalculation.
- *
  * Props:
- *   subscriptions: Array  – the subscriptions[] from the dashboard response
+ *   subscriptions:    Array   – from GET /api/dashboard
+ *   onToggleStatus:   (id, newStatus) => Promise<void>  – handled in App.jsx
  */
-function SubscriptionTable({ subscriptions }) {
+function SubscriptionTable({ subscriptions, onToggleStatus }) {
   if (!subscriptions || subscriptions.length === 0) {
     return (
       <section className="table-section">
@@ -82,7 +179,6 @@ function SubscriptionTable({ subscriptions }) {
     <section className="table-section">
       <h2 className="table-title">Your Subscriptions</h2>
 
-      {/* Wrapper allows horizontal scroll on narrow viewports */}
       <div className="table-scroll">
         <table className="sub-table">
           <thead>
@@ -99,25 +195,11 @@ function SubscriptionTable({ subscriptions }) {
           </thead>
           <tbody>
             {subscriptions.map((sub) => (
-              <tr
+              <SubscriptionRow
                 key={sub.id}
-                className={sub.renewingSoon ? 'row row--renewing' : 'row'}
-              >
-                <td className="td-service">{sub.serviceName}</td>
-                <td>{formatINR(sub.cost)}</td>
-                <td>{sub.billingCycle}</td>
-                <td>{formatINR(sub.monthlyCost)}</td>
-                <td>{formatDate(sub.nextRenewalDate)}</td>
-                <td className={sub.daysRemaining < 0 ? 'td-expired' : ''}>
-                  {formatDaysRemaining(sub.daysRemaining)}
-                </td>
-                <td>
-                  <RenewalBadge renewingSoon={sub.renewingSoon} />
-                </td>
-                <td>
-                  <StatusBadge status={sub.status} />
-                </td>
-              </tr>
+                sub={sub}
+                onToggleStatus={onToggleStatus}
+              />
             ))}
           </tbody>
         </table>
