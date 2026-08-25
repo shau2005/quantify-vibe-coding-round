@@ -1,8 +1,6 @@
 /* ==========================================================
-   Subscription Tracker — Global Styles
+   Subscription Tracker — Light Theme
    ========================================================== */
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 *,
 *::before,
@@ -16,8 +14,8 @@
 
 body {
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-  background-color: #0d0d12;
-  color: #e2e2ea;
+  background-color: #F6F8FC;
+  color: #0F172A;
   min-height: 100vh;
   line-height: 1.5;
 }
@@ -25,9 +23,9 @@ body {
 /* ── Layout ──────────────────────────────────────────────── */
 
 .app-container {
-  max-width: 1100px;
+  max-width: 1140px;
   margin: 0 auto;
-  padding: 2.5rem 1.5rem 4rem;
+  padding: 2.5rem 2rem 4rem;
 }
 
 .app-header {
@@ -36,40 +34,40 @@ body {
 }
 
 .app-title {
-  font-size: 2rem;
+  font-size: 1.85rem;
   font-weight: 700;
   letter-spacing: -0.03em;
-  background: linear-gradient(130deg, #a78bfa 0%, #60a5fa 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #0F172A;
   margin-bottom: 0.35rem;
 }
 
+/* Subtle blue accent on the last word via a span would require JSX change —
+   keep as plain text, navy is clean and professional */
+
 .app-subtitle {
   font-size: 0.9rem;
-  color: #6b6b80;
+  color: #64748B;
 }
 
 .app-main {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.75rem;
 }
 
 /* ── Status messages ─────────────────────────────────────── */
 
 .status-message {
   text-align: center;
-  color: #6b6b80;
+  color: #64748B;
   font-size: 0.9rem;
   padding: 1.25rem;
 }
 
 .status-message--error {
-  color: #f87171;
-  background: rgba(248, 113, 113, 0.08);
-  border: 1px solid rgba(248, 113, 113, 0.2);
+  color: #B91C1C;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
   border-radius: 10px;
 }
 
@@ -82,26 +80,22 @@ body {
 }
 
 .metric-card {
-  background: #16161e;
-  border: 1px solid #23232f;
-  border-radius: 14px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
   padding: 1.5rem 1.75rem;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  transition: border-color 0.2s;
-}
-
-.metric-card:hover {
-  border-color: #3d3d55;
+  gap: 0.5rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 
 .metric-label {
-  font-size: 0.78rem;
-  font-weight: 500;
+  font-size: 0.75rem;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: #6b6b80;
+  color: #64748B;
 }
 
 .metric-value {
@@ -112,35 +106,36 @@ body {
 }
 
 .metric-value--burn {
-  color: #a78bfa;
+  color: #4F46E5;
 }
 
 .metric-value--renewals {
-  color: #60a5fa;
+  color: #2563EB;
 }
 
 /* ── Form section ────────────────────────────────────────── */
 
 .form-section {
-  background: #16161e;
-  border: 1px solid #23232f;
-  border-radius: 14px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
   padding: 1.75rem 2rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 
 .form-title {
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: #c4c4d4;
+  color: #0F172A;
   margin-bottom: 1.25rem;
 }
 
 /* Inline error banner */
 .form-error {
-  background: rgba(248, 113, 113, 0.08);
-  border: 1px solid rgba(248, 113, 113, 0.25);
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
   border-radius: 8px;
-  color: #f87171;
+  color: #B91C1C;
   font-size: 0.875rem;
   padding: 0.65rem 0.9rem;
   margin-bottom: 1.1rem;
@@ -156,92 +151,93 @@ body {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.35rem;
 }
 
 .form-label {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #9090a8;
-  letter-spacing: 0.02em;
+  color: #374151;
+  letter-spacing: 0.01em;
 }
 
 .form-input {
-  background: #0d0d12;
-  border: 1px solid #2a2a38;
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
   border-radius: 8px;
-  color: #e2e2ea;
+  color: #0F172A;
   font-family: inherit;
   font-size: 0.9rem;
   padding: 0.6rem 0.8rem;
-  transition: border-color 0.18s, box-shadow 0.18s;
+  transition: border-color 0.15s, box-shadow 0.15s;
   outline: none;
   width: 100%;
 }
 
 .form-input:focus {
-  border-color: #7c5ccc;
-  box-shadow: 0 0 0 3px rgba(124, 92, 204, 0.15);
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .form-input:disabled {
-  opacity: 0.5;
+  background: #F8FAFC;
+  opacity: 0.65;
   cursor: not-allowed;
 }
 
 .form-input::placeholder {
-  color: #40404f;
+  color: #94A3B8;
 }
 
-/* Native date picker text color fix */
+/* Date picker icon stays visible on light background */
 .form-input[type='date']::-webkit-calendar-picker-indicator {
-  filter: invert(0.6);
+  filter: none;
   cursor: pointer;
+  opacity: 0.5;
 }
 
 .form-select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6b80' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.75rem center;
   padding-right: 2.25rem;
   cursor: pointer;
 }
 
-/* Submit button spans full width */
+/* Submit button — full-width primary blue */
 .form-submit {
   grid-column: 1 / -1;
   margin-top: 0.25rem;
-  background: linear-gradient(130deg, #7c5ccc, #4f87e0);
+  background: #2563EB;
   border: none;
   border-radius: 8px;
-  color: #fff;
+  color: #FFFFFF;
   cursor: pointer;
   font-family: inherit;
   font-size: 0.9rem;
   font-weight: 600;
-  padding: 0.75rem 1.5rem;
-  transition: opacity 0.18s, transform 0.12s;
-  letter-spacing: 0.02em;
+  padding: 0.72rem 1.5rem;
+  transition: background-color 0.15s;
+  letter-spacing: 0.01em;
 }
 
 .form-submit:hover:not(:disabled) {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  background: #1D4ED8;
 }
 
 .form-submit:active:not(:disabled) {
-  transform: translateY(0);
+  background: #1E40AF;
 }
 
 .form-submit:disabled {
-  opacity: 0.5;
+  background: #93C5FD;
   cursor: not-allowed;
 }
 
 /* ── Responsive ──────────────────────────────────────────── */
 
-@media (max-width: 560px) {
+@media (max-width: 600px) {
   .metrics-row {
     grid-template-columns: 1fr;
   }
@@ -254,59 +250,86 @@ body {
 /* ── Subscription table ───────────────────────────────────── */
 
 .table-section {
-  background: #16161e;
-  border: 1px solid #23232f;
-  border-radius: 14px;
-  padding: 1.75rem 2rem;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+
+  /* Vertical padding only — horizontal padding is handled by th/td
+     so the scroll container never clips the first column */
+  padding: 1.75rem 0;
+}
+
+.table-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0 1.75rem;
+  margin-bottom: 1rem;
 }
 
 .table-title {
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: #c4c4d4;
-  margin-bottom: 1.25rem;
+  color: #0F172A;
+}
+
+.table-sort-caption {
+  font-size: 0.75rem;
+  color: #94A3B8;
+  font-weight: 400;
 }
 
 .table-empty {
-  color: #6b6b80;
+  color: #64748B;
   font-size: 0.9rem;
   text-align: center;
-  padding: 2rem 0;
+  padding: 2rem 1.75rem;
 }
 
-/* Scroll container so the table never breaks the page on narrow widths */
+/* Scroll wrapper — clips only when the table genuinely overflows */
 .table-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  /* Small left/right padding so the first and last columns are never
+     flush against the card edge but are never clipped either */
+  padding: 0 1.75rem;
 }
 
 .sub-table {
   width: 100%;
-  min-width: 700px;        /* trigger horizontal scroll before collapsing */
+  min-width: 760px;
   border-collapse: collapse;
   font-size: 0.875rem;
 }
 
 /* Header */
 .sub-table thead tr {
-  border-bottom: 1px solid #2a2a38;
+  background-color: #F8FAFC;
+  border-bottom: 1px solid #E2E8F0;
 }
 
 .sub-table th {
-  padding: 0.6rem 0.9rem;
+  padding: 0.65rem 1rem;
   text-align: left;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #6b6b80;
+  letter-spacing: 0.07em;
+  color: #64748B;
   white-space: nowrap;
+}
+
+/* First header cell gets a little extra left room */
+.sub-table th:first-child,
+.sub-table td:first-child {
+  padding-left: 1.25rem;
 }
 
 /* Body rows */
 .sub-table tbody tr {
-  border-bottom: 1px solid #1e1e28;
-  transition: background-color 0.15s;
+  border-bottom: 1px solid #F1F5F9;
+  transition: background-color 0.12s;
 }
 
 .sub-table tbody tr:last-child {
@@ -314,47 +337,47 @@ body {
 }
 
 .sub-table tbody tr:hover {
-  background-color: #1c1c28;
+  background-color: #F8FAFC;
 }
 
-/* Renewing-soon row — subtle amber left border + tinted background */
+/* Renewing-soon row — amber left accent */
 .row--renewing {
-  background-color: rgba(251, 191, 36, 0.04);
-  border-left: 3px solid #fbbf24 !important;
+  background-color: #FFF7ED !important;
+  border-left: 3px solid #D97706;
 }
 
 .row--renewing:hover {
-  background-color: rgba(251, 191, 36, 0.08) !important;
+  background-color: #FFEDD5 !important;
 }
 
-/* Default rows get a transparent left border so layout is stable */
+/* Default rows: transparent left border keeps layout stable */
 .row {
   border-left: 3px solid transparent;
 }
 
 .sub-table td {
-  padding: 0.75rem 0.9rem;
-  color: #d4d4e0;
+  padding: 0.8rem 1rem;
+  color: #334155;
   white-space: nowrap;
   vertical-align: middle;
 }
 
-/* Service name slightly bolder */
+/* Service name — slightly bolder, navy */
 .td-service {
   font-weight: 500;
-  color: #e8e8f0;
+  color: #0F172A;
 }
 
-/* Expired days styled dimmer */
+/* Expired days — muted */
 .td-expired {
-  color: #6b6b80;
+  color: #94A3B8;
 }
 
 /* ── Badges ───────────────────────────────────────────────── */
 
 .badge {
   display: inline-block;
-  padding: 0.25rem 0.6rem;
+  padding: 0.2rem 0.6rem;
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 600;
@@ -362,44 +385,44 @@ body {
   white-space: nowrap;
 }
 
-/* Renewing Soon — amber */
+/* Renewing Soon — amber, sufficient contrast */
 .badge--amber {
-  background: rgba(251, 191, 36, 0.15);
-  color: #fbbf24;
-  border: 1px solid rgba(251, 191, 36, 0.3);
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FCD34D;
 }
 
 /* Active — green */
 .badge--active {
-  background: rgba(52, 211, 153, 0.12);
-  color: #34d399;
-  border: 1px solid rgba(52, 211, 153, 0.25);
+  background: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #86EFAC;
 }
 
-/* Paused — neutral muted */
+/* Paused — neutral */
 .badge--paused {
-  background: rgba(107, 107, 128, 0.15);
-  color: #9090a8;
-  border: 1px solid rgba(107, 107, 128, 0.25);
+  background: #F1F5F9;
+  color: #64748B;
+  border: 1px solid #CBD5E1;
 }
 
 /* Neutral dash when not renewing soon */
 .renewal-neutral {
-  color: #40404f;
+  color: #CBD5E1;
+  font-size: 1rem;
 }
 
 /* ── Paused row ───────────────────────────────────────────── */
 
-/* Grey out paused rows — subscription remains visible but clearly inactive */
 .row--paused {
-  opacity: 0.45;
-  background-color: rgba(107, 107, 128, 0.06);
-  border-left: 3px solid #3d3d55 !important;
+  background-color: #F1F5F9 !important;
+  border-left: 3px solid #CBD5E1 !important;
+  opacity: 0.75;
 }
 
 .row--paused:hover {
-  opacity: 0.6;
-  background-color: rgba(107, 107, 128, 0.1) !important;
+  background-color: #E9EEF5 !important;
+  opacity: 0.88;
 }
 
 /* ── Toggle switch ────────────────────────────────────────── */
@@ -410,7 +433,7 @@ body {
   gap: 0.5rem;
 }
 
-/* The pill-shaped track */
+/* Pill-shaped track */
 .toggle-switch {
   position: relative;
   width: 36px;
@@ -419,37 +442,38 @@ body {
   border: none;
   cursor: pointer;
   padding: 0;
-  transition: background-color 0.2s;
+  transition: background-color 0.18s;
   flex-shrink: 0;
 }
 
 .toggle-switch--on {
-  background: linear-gradient(130deg, #7c5ccc, #4f87e0);
+  background: #2563EB;
 }
 
 .toggle-switch--off {
-  background: #2a2a38;
+  background: #CBD5E1;
 }
 
 .toggle-switch--loading {
   cursor: wait;
-  opacity: 0.6;
+  opacity: 0.55;
 }
 
 .toggle-switch:focus-visible {
-  outline: 2px solid #7c5ccc;
+  outline: 2px solid #2563EB;
   outline-offset: 2px;
 }
 
-/* The circular thumb */
+/* Circular thumb */
 .toggle-thumb {
   position: absolute;
   top: 2px;
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #fff;
-  transition: left 0.2s;
+  background: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  transition: left 0.18s;
   pointer-events: none;
 }
 
@@ -461,7 +485,7 @@ body {
   left: 2px;
 }
 
-/* Label next to the switch */
+/* Label text */
 .toggle-label {
   font-size: 0.78rem;
   font-weight: 600;
@@ -469,11 +493,11 @@ body {
 }
 
 .toggle-label--active {
-  color: #34d399;
+  color: #15803D;
 }
 
 .toggle-label--paused {
-  color: #9090a8;
+  color: #64748B;
 }
 
 /* ── Per-row inline error ─────────────────────────────────── */
@@ -483,8 +507,126 @@ body {
 }
 
 .row-error-cell {
-  padding: 0.3rem 0.9rem 0.6rem !important;
+  padding: 0.3rem 1.25rem 0.6rem !important;
   font-size: 0.78rem;
-  color: #f87171;
-  background: rgba(248, 113, 113, 0.06);
+  color: #B91C1C;
+  background: #FEF2F2;
+}
+
+/* ── Screen-reader only utility ──────────────────────────── */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Count summary ───────────────────────────────────────── */
+
+.count-summary {
+  font-size: 0.8rem;
+  color: #64748B;
+  padding: 0 1.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.count-active {
+  color: #15803D;
+  font-weight: 500;
+}
+
+.count-paused {
+  color: #64748B;
+  font-weight: 500;
+}
+
+/* ── Search + filter toolbar ─────────────────────────────── */
+
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Search input */
+.search-input {
+  flex: 1 1 180px;
+  min-width: 160px;
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  color: #0F172A;
+  font-family: inherit;
+  font-size: 0.875rem;
+  padding: 0.5rem 0.8rem;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.search-input:focus {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.search-input::placeholder {
+  color: #94A3B8;
+}
+
+/* Filter button group */
+.filter-buttons {
+  display: flex;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.filter-btn {
+  padding: 0.4rem 0.85rem;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px;
+  background: #FFFFFF;
+  color: #475569;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.13s, border-color 0.13s, color 0.13s;
+}
+
+.filter-btn:hover:not(.filter-btn--active) {
+  background: #F1F5F9;
+  border-color: #94A3B8;
+}
+
+.filter-btn:focus-visible {
+  outline: 2px solid #2563EB;
+  outline-offset: 2px;
+}
+
+/* Active / selected filter button */
+.filter-btn--active {
+  background: #2563EB;
+  border-color: #2563EB;
+  color: #FFFFFF;
+}
+
+/* ── Responsive toolbar ──────────────────────────────────── */
+
+@media (max-width: 500px) {
+  .table-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-buttons {
+    justify-content: flex-start;
+  }
 }

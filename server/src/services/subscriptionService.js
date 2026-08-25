@@ -67,10 +67,12 @@ function withDerivedFields(sub) {
  * Calculate dashboard-level metrics from an array of enriched subscriptions.
  * Only ACTIVE subscriptions contribute to financial metrics.
  * @param {Array} enriched – subscriptions already decorated with derived fields
- * @returns {{ monthlyBurnRate: number, upcomingRenewalsCount: number }}
+ * @returns {{ monthlyBurnRate: number, upcomingRenewalsCount: number,
+ *             activeSubscriptionsCount: number, pausedSubscriptionsCount: number }}
  */
 function calcMetrics(enriched) {
   const active = enriched.filter((s) => s.status === 'active');
+  const paused = enriched.filter((s) => s.status === 'paused');
 
   const monthlyBurnRate =
     Math.round(
@@ -79,7 +81,12 @@ function calcMetrics(enriched) {
 
   const upcomingRenewalsCount = active.filter((s) => s.renewingSoon).length;
 
-  return { monthlyBurnRate, upcomingRenewalsCount };
+  return {
+    monthlyBurnRate,
+    upcomingRenewalsCount,
+    activeSubscriptionsCount: active.length,
+    pausedSubscriptionsCount: paused.length,
+  };
 }
 
 // ─── Validation ───────────────────────────────────────────────────────────────
@@ -135,17 +142,51 @@ function validateSubscriptionInput({ serviceName, cost, billingCycle, nextRenewa
   return null;
 }
 
+// ─── Sorting ──────────────────────────────────────────────────────────────────
+
+/**
+ * Sort enriched subscriptions for the dashboard response.
+ *
+ * Rules:
+ *   1. Future / today (daysRemaining >= 0) before expired (daysRemaining < 0).
+ *   2. Among future/today: ascending daysRemaining (soonest first).
+ *   3. Among expired: descending daysRemaining (most recently expired first,
+ *      i.e. -1 before -15).
+ *
+ * Does NOT mutate the input array.
+ * @param {Array} enriched
+ * @returns {Array}
+ */
+function sortByRenewal(enriched) {
+  return [...enriched].sort((a, b) => {
+    const aFuture = a.daysRemaining >= 0;
+    const bFuture = b.daysRemaining >= 0;
+
+    // One future, one expired → future always first
+    if (aFuture !== bFuture) return aFuture ? -1 : 1;
+
+    // Both future/today → soonest first (smaller daysRemaining first)
+    if (aFuture) return a.daysRemaining - b.daysRemaining;
+
+    // Both expired → most recently expired first (closer to 0, i.e. -1 before -15)
+    return b.daysRemaining - a.daysRemaining;
+  });
+}
+
 // ─── Public service functions ─────────────────────────────────────────────────
 
 /**
- * Return dashboard data: metrics + enriched subscription list.
+ * Return dashboard data: metrics + sorted enriched subscription list.
+ * Metrics are calculated before sorting (order does not affect sums/counts).
  */
 function getDashboardData() {
   const all = repo.readAll();
   const enriched = all.map(withDerivedFields);
   const metrics = calcMetrics(enriched);
-  return { metrics, subscriptions: enriched };
+  const subscriptions = sortByRenewal(enriched);
+  return { metrics, subscriptions };
 }
+
 
 /**
  * Create and persist a new subscription.

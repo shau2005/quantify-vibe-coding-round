@@ -79,6 +79,7 @@ function App() {
         {!loading && (
           <SubscriptionTable
             subscriptions={subscriptions}
+            metrics={metrics}
             onToggleStatus={handleToggleStatus}
           />
         )}

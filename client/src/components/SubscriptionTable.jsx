@@ -52,11 +52,6 @@ function RenewalBadge({ renewingSoon }) {
  * An accessible toggle switch for Active ↔ Paused.
  * Calls onToggle(newStatus) when the user clicks.
  * Disabled while a request for THIS row is in-flight.
- *
- * Props:
- *   status:    "active" | "paused"
- *   loading:   boolean  — disables the switch while the PATCH is in progress
- *   onToggle:  (newStatus: string) => void
  */
 function StatusToggle({ status, loading, onToggle }) {
   const isActive = status === 'active';
@@ -83,13 +78,11 @@ function StatusToggle({ status, loading, onToggle }) {
   );
 }
 
-// ─── Row ─────────────────────────────────────────────────────────────────────
+// ─── Row ──────────────────────────────────────────────────────────────────────
 
 /**
  * SubscriptionRow
- *
  * Manages per-row toggle loading + error state.
- * Calls onToggleStatus(id, newStatus) which lives in App.jsx.
  */
 function SubscriptionRow({ sub, onToggleStatus }) {
   const [rowLoading, setRowLoading] = useState(false);
@@ -110,7 +103,6 @@ function SubscriptionRow({ sub, onToggleStatus }) {
   const isPaused   = sub.status === 'paused';
   const isRenewing = sub.renewingSoon && !isPaused;
 
-  // Row class priority: paused overrides renewing-soon styling
   let rowClass = 'row';
   if (isPaused) {
     rowClass = 'row row--paused';
@@ -130,7 +122,6 @@ function SubscriptionRow({ sub, onToggleStatus }) {
           {formatDaysRemaining(sub.daysRemaining)}
         </td>
         <td>
-          {/* Only show renewal badge for active subscriptions */}
           <RenewalBadge renewingSoon={isRenewing} />
         </td>
         <td>
@@ -142,7 +133,6 @@ function SubscriptionRow({ sub, onToggleStatus }) {
         </td>
       </tr>
 
-      {/* Inline error row — appears directly under the subscription row */}
       {rowError && (
         <tr className="row-error-row">
           <td colSpan={8} className="row-error-cell">
@@ -154,16 +144,66 @@ function SubscriptionRow({ sub, onToggleStatus }) {
   );
 }
 
+// ─── Toolbar ──────────────────────────────────────────────────────────────────
+
+const STATUS_FILTERS = ['All', 'Active', 'Paused'];
+
+/**
+ * TableToolbar
+ * Renders the search input and All / Active / Paused filter buttons.
+ */
+function TableToolbar({ search, onSearch, statusFilter, onStatusFilter }) {
+  return (
+    <div className="table-toolbar">
+      <div className="search-wrapper">
+        <label htmlFor="sub-search" className="sr-only">Search subscriptions</label>
+        <input
+          id="sub-search"
+          type="search"
+          className="search-input"
+          placeholder="Search subscriptions..."
+          value={search}
+          onChange={(e) => onSearch(e.target.value)}
+          aria-label="Search subscriptions"
+        />
+      </div>
+
+      <div className="filter-buttons" role="group" aria-label="Filter by status">
+        {STATUS_FILTERS.map((f) => (
+          <button
+            key={f}
+            type="button"
+            className={`filter-btn ${statusFilter === f ? 'filter-btn--active' : ''}`}
+            onClick={() => onStatusFilter(f)}
+            aria-pressed={statusFilter === f}
+          >
+            {f}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 /**
  * SubscriptionTable
  *
  * Props:
- *   subscriptions:    Array   – from GET /api/dashboard
+ *   subscriptions:    Array   – sorted enriched list from GET /api/dashboard
+ *   metrics:          Object  – server-returned metrics (includes counts)
  *   onToggleStatus:   (id, newStatus) => Promise<void>  – handled in App.jsx
+ *
+ * Search and filter are presentation-only: they never call the backend and
+ * never modify metrics. The full subscriptions array stays intact in App.jsx.
  */
-function SubscriptionTable({ subscriptions, onToggleStatus }) {
+function SubscriptionTable({ subscriptions, metrics, onToggleStatus }) {
+  // Search and filter state lives here — purely presentational
+  const [search, setSearch]             = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
+
+  // ── "No subscriptions at all" empty state ─────────────────────────────────
   if (!subscriptions || subscriptions.length === 0) {
     return (
       <section className="table-section">
@@ -175,35 +215,81 @@ function SubscriptionTable({ subscriptions, onToggleStatus }) {
     );
   }
 
+  // ── Presentation-only filtering (no backend call) ─────────────────────────
+  const query = search.trim().toLowerCase();
+
+  const visible = subscriptions.filter((sub) => {
+    const matchesSearch = query === '' ||
+      sub.serviceName.toLowerCase().includes(query);
+    const matchesFilter =
+      statusFilter === 'All' ||
+      sub.status === statusFilter.toLowerCase();
+    return matchesSearch && matchesFilter;
+  });
+
+  // ── Count summary (server-provided counts, displayed verbatim) ────────────
+  const total  = (metrics?.activeSubscriptionsCount ?? 0) +
+                 (metrics?.pausedSubscriptionsCount ?? 0);
+  const active = metrics?.activeSubscriptionsCount ?? 0;
+  const paused = metrics?.pausedSubscriptionsCount ?? 0;
+
   return (
     <section className="table-section">
-      <h2 className="table-title">Your Subscriptions</h2>
-
-      <div className="table-scroll">
-        <table className="sub-table">
-          <thead>
-            <tr>
-              <th>Service</th>
-              <th>Original Cost</th>
-              <th>Billing Cycle</th>
-              <th>Monthly Cost</th>
-              <th>Next Renewal</th>
-              <th>Days Remaining</th>
-              <th>Renewal Status</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {subscriptions.map((sub) => (
-              <SubscriptionRow
-                key={sub.id}
-                sub={sub}
-                onToggleStatus={onToggleStatus}
-              />
-            ))}
-          </tbody>
-        </table>
+      {/* Header row: title + sort caption */}
+      <div className="table-header">
+        <h2 className="table-title">Your Subscriptions</h2>
+        <span className="table-sort-caption">Sorted by upcoming renewal</span>
       </div>
+
+      {/* Count summary — server-calculated values, no React arithmetic */}
+      <p className="count-summary">
+        {total} {total === 1 ? 'subscription' : 'subscriptions'}
+        {' • '}
+        <span className="count-active">{active} Active</span>
+        {' • '}
+        <span className="count-paused">{paused} Paused</span>
+      </p>
+
+      {/* Search + filter toolbar */}
+      <TableToolbar
+        search={search}
+        onSearch={setSearch}
+        statusFilter={statusFilter}
+        onStatusFilter={setStatusFilter}
+      />
+
+      {/* No-results state: data exists but nothing matches search/filter */}
+      {visible.length === 0 ? (
+        <p className="table-empty">
+          No subscriptions match your search or filter.
+        </p>
+      ) : (
+        <div className="table-scroll">
+          <table className="sub-table">
+            <thead>
+              <tr>
+                <th>Service</th>
+                <th>Original Cost</th>
+                <th>Billing Cycle</th>
+                <th>Monthly Cost</th>
+                <th>Next Renewal</th>
+                <th>Days Remaining</th>
+                <th>Renewal Status</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visible.map((sub) => (
+                <SubscriptionRow
+                  key={sub.id}
+                  sub={sub}
+                  onToggleStatus={onToggleStatus}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </section>
   );
 }
