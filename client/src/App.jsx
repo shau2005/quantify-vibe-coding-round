@@ -2,18 +2,21 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { fetchDashboard } from './services/api';
 import MetricsRow from './components/MetricsRow';
 import SubscriptionForm from './components/SubscriptionForm';
+import SubscriptionTable from './components/SubscriptionTable';
 
 function App() {
   const [metrics, setMetrics] = useState(null);
+  const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dashboardError, setDashboardError] = useState('');
 
-  // Load dashboard data from the server
+  // Single request that feeds both MetricsRow and SubscriptionTable
   const loadDashboard = useCallback(async () => {
     try {
       setDashboardError('');
       const data = await fetchDashboard();
       setMetrics(data.metrics);
+      setSubscriptions(data.subscriptions);
     } catch (err) {
       setDashboardError(err.message || 'Failed to load dashboard.');
     } finally {
@@ -25,9 +28,10 @@ function App() {
     loadDashboard();
   }, [loadDashboard]);
 
-  // Called by SubscriptionForm after a successful POST
+  // Called by SubscriptionForm after a successful POST — one refresh updates
+  // both the metrics row and the subscription table.
   function handleSubscriptionCreated() {
-    loadDashboard(); // refresh metrics from server
+    loadDashboard();
   }
 
   return (
@@ -51,6 +55,10 @@ function App() {
         )}
 
         <SubscriptionForm onSuccess={handleSubscriptionCreated} />
+
+        {!loading && (
+          <SubscriptionTable subscriptions={subscriptions} />
+        )}
       </main>
     </div>
   );

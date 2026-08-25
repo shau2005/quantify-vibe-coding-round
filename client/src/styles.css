@@ -25,7 +25,7 @@ body {
 /* ── Layout ──────────────────────────────────────────────── */
 
 .app-container {
-  max-width: 820px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 2.5rem 1.5rem 4rem;
 }
@@ -250,3 +250,141 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Subscription table ───────────────────────────────────── */
+
+.table-section {
+  background: #16161e;
+  border: 1px solid #23232f;
+  border-radius: 14px;
+  padding: 1.75rem 2rem;
+}
+
+.table-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #c4c4d4;
+  margin-bottom: 1.25rem;
+}
+
+.table-empty {
+  color: #6b6b80;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+/* Scroll container so the table never breaks the page on narrow widths */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sub-table {
+  width: 100%;
+  min-width: 700px;        /* trigger horizontal scroll before collapsing */
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+/* Header */
+.sub-table thead tr {
+  border-bottom: 1px solid #2a2a38;
+}
+
+.sub-table th {
+  padding: 0.6rem 0.9rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b6b80;
+  white-space: nowrap;
+}
+
+/* Body rows */
+.sub-table tbody tr {
+  border-bottom: 1px solid #1e1e28;
+  transition: background-color 0.15s;
+}
+
+.sub-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.sub-table tbody tr:hover {
+  background-color: #1c1c28;
+}
+
+/* Renewing-soon row — subtle amber left border + tinted background */
+.row--renewing {
+  background-color: rgba(251, 191, 36, 0.04);
+  border-left: 3px solid #fbbf24 !important;
+}
+
+.row--renewing:hover {
+  background-color: rgba(251, 191, 36, 0.08) !important;
+}
+
+/* Default rows get a transparent left border so layout is stable */
+.row {
+  border-left: 3px solid transparent;
+}
+
+.sub-table td {
+  padding: 0.75rem 0.9rem;
+  color: #d4d4e0;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* Service name slightly bolder */
+.td-service {
+  font-weight: 500;
+  color: #e8e8f0;
+}
+
+/* Expired days styled dimmer */
+.td-expired {
+  color: #6b6b80;
+}
+
+/* ── Badges ───────────────────────────────────────────────── */
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+/* Renewing Soon — amber */
+.badge--amber {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+/* Active — green */
+.badge--active {
+  background: rgba(52, 211, 153, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.25);
+}
+
+/* Paused — neutral muted */
+.badge--paused {
+  background: rgba(107, 107, 128, 0.15);
+  color: #9090a8;
+  border: 1px solid rgba(107, 107, 128, 0.25);
+}
+
+/* Neutral dash when not renewing soon */
+.renewal-neutral {
+  color: #40404f;
+}
+
