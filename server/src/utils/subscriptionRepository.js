@@ -23,13 +23,4 @@ function writeAll(subscriptions) {
   fs.writeFileSync(DATA_FILE, JSON.stringify(subscriptions, null, 2), 'utf-8');
 }
 
-/**
- * Find a single subscription by id.
- * @param {string} id
- * @returns {Object|undefined}
- */
-function findById(id) {
-  return readAll().find((s) => s.id === id);
-}
-
-module.exports = { readAll, writeAll, findById };
+module.exports = { readAll, writeAll };
